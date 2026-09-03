@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ahmet Gür | Bilgisayar Mühendisi & Siber Güvenlik Uzmanı</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Core color variables for both themes */
+        :root {
+            /* Dark Theme (Default) */
+            --bg-primary: #0d1117;
+            --text-primary: #c9d1d9;
+            --accent-color: #00ff41;
+            --text-faded: #8b949e;
+            --card-bg: #161b22;
+            --card-border: #30363d;
+            --neon-glow-shadow: 0 0 5px var(--accent-color), 0 0 10px rgba(0, 255, 65, 0.5);
+        }
+
+        /* Light Theme overrides */
+        [data-theme='light'] {
+            --bg-primary: #f0f2f5;
+            --text-primary: #2d3748;
+            --accent-color: #3182ce;
+            --text-faded: #a0aec0;
+            --card-bg: #ffffff;
+            --card-border: #e2e8f0;
+            --neon-glow-shadow: none;
+        }
+
+        body {
+            font-family: 'Roboto Mono', monospace;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .neon-glow {
+            color: var(--accent-color);
+            text-shadow: var(--neon-glow-shadow);
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .section-hidden {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+
+        .section-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body class="p-4 md:p-10" data-theme="dark">
+
+    <!-- Navbar -->
+    <nav class="sticky top-0 z-50 bg-primary/80 backdrop-blur-md border-b" style="border-color: var(--card-border);">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <a href="#hero" class="font-extrabold text-2xl neon-glow">AG</a>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#profile" class="nav-link text-text-faded hover:text-accent-color px-3 py-2 rounded-md text-sm font-medium transition-colors" data-key="nav_profile">Profil</a>
+                        <a href="#skills" class="nav-link text-text-faded hover:text-accent-color px-3 py-2 rounded-md text-sm font-medium transition-colors" data-key="nav_skills">Yetenekler</a>
+                        <a href="#projects" class="nav-link text-text-faded hover:text-accent-color px-3 py-2 rounded-md text-sm font-medium transition-colors" data-key="nav_projects">Projeler</a>
+                        <a href="#experience" class="nav-link text-text-faded hover:text-accent-color px-3 py-2 rounded-md text-sm font-medium transition-colors" data-key="nav_experience">Deneyim</a>
+                        <a href="#contact" class="nav-link text-text-faded hover:text-accent-color px-3 py-2 rounded-md text-sm font-medium transition-colors" data-key="nav_contact">İletişim</a>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <div class="ml-2 flex items-center space-x-2">
+                        <!-- Theme Toggle Button -->
+                        <button id="theme-toggle" class="text-text-faded hover:text-accent-color transition-colors p-2 rounded-full">
+                            <svg id="moon-icon" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M21.73,12.35a8.75,8.75,0,0,1-8.38,8.38A11.77,11.77,0,0,1,12,24V0A11.77,11.77,0,0,1,21.73,12.35ZM12,2a10,10,0,0,0,0,20,10,10,0,0,0,0-20Z"></path>
+                            </svg>
+                            <svg id="sun-icon" class="hidden w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M12,18a6,6,0,1,1,6-6A6,6,0,0,1,12,18ZM12,2a10,10,0,1,0,10,10A10,10,0,0,0,12,2Zm0,2a8,8,0,1,1,0,16A8,8,0,0,1,12,4Zm0,2v2h2V6H12Zm0,12v2h2V18H12Zm-6-6h2v2H6V12Zm10,0h2v2H16V12Zm9.5,4.5l-1.41,1.41L15.5,19.5Zm4.5-6h2v2h-2V12Zm-16,0h2v2H4V12Zm-1.41-1.41L6.91,6.41,4.5,9.5Zm15,6L17.09,17.09l1.41-1.41Z"></path>
+                            </svg>
+                        </button>
+                        <!-- Language Toggles -->
+                        <button id="lang-tr" class="lang-btn font-bold text-sm px-2 py-1 neon-glow">TR</button>
+                        <span class="text-text-faded">|</span>
+                        <button id="lang-en" class="lang-btn font-medium text-sm px-2 py-1 text-text-faded">EN</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Hero Section -->
+        <section id="hero" class="text-center py-20 md:py-32">
+            <h1 class="text-4xl md:text-6xl font-extrabold neon-glow" data-key="hero_title">AHMET GÜR</h1>
+            <p class="mt-4 text-lg md:text-2xl font-semibold" style="color: var(--text-primary);" data-key="hero_subtitle">Bilgisayar Mühendisi & Siber Güvenlik Uzmanı</p>
+            <p class="mt-6 max-w-2xl mx-auto text-base md:text-lg" style="color: var(--text-faded);" data-key="hero_description">
+                IT ve OT ortamları için kritik ağ altyapılarını tasarlama ve yeni nesil siber tehditlere karşı koruma tutkusuna sahibim.
+            </p>
+            <div class="mt-8 flex justify-center space-x-4">
+                <a href="mailto:ahhmetgur@gmail.com" class="px-6 py-3 rounded-md font-semibold transition-colors" style="background-color: var(--accent-color); color: var(--bg-primary);" data-key="hero_contact_btn">İletişime Geç</a>
+                <a href="https://linkedin.com/in/ahmetgur" target="_blank" class="border px-6 py-3 rounded-md font-semibold transition-colors" style="border-color: var(--accent-color); color: var(--accent-color);" data-key="hero_linkedin_btn">LinkedIn</a>
+            </div>
+        </section>
+
+        <!-- Profile Section -->
+        <section id="profile" class="scroll-mt-20 py-16 md:py-24 section-hidden">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold neon-glow" data-key="profile_title">Profil</h2>
+                <p class="mt-4 text-lg" style="color: var(--text-faded);" data-key="profile_intro">Mükemmelliğe ve sürekli öğrenmeye adanmış bir mühendis.</p>
+            </div>
+            <div class="card p-8 rounded-lg">
+                <p class="text-base md:text-lg leading-relaxed" style="color: var(--text-primary);" data-key="profile_text">
+                    Siber güvenlik ve ağ teknolojilerine güçlü bir şekilde odaklanan bir Bilgisayar Mühendisiyim. İletişim ve Siber Güvenlik alanında bir yılı aşkın uygulamalı deneyime sahibim. Uzmanlığım Firewall, NAC, SIEM ve EDR gibi güvenlik çözümlerinin yanı sıra Switch ve Router gibi ağ altyapı bileşenlerinin kurulumu, yapılandırılması ve entegrasyonu üzerine kurulmuştur.<br/>
+                    Ağ zafiyet taramaları, sanallaştırma platformları ve çoklu işletim sistemi güvenlik testleri dahil olmak üzere, hem IT hem de OT Güvenlik projelerinde kanıtlanmış bir geçmişe sahibim. Analitik problem çözme becerilerim, dinamik ortamlara hızlı uyum sağlama yeteneğim ve net iletişimim ile tanınıyorum. Kariyerim boyunca sürekli mesleki gelişime ve her projeye ölçülebilir değer katmaya kararlıyım.
+                </p>
+            </div>
+        </section>
+
+        <!-- Skills Section -->
+        <section id="skills" class="scroll-mt-20 py-16 md:py-24 section-hidden">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold neon-glow" data-key="skills_title">Temel Yetkinlikler</h2>
+                <p class="mt-4 text-lg" style="color: var(--text-faded);" data-key="skills_intro">Siber güvenlik uzmanlığı, geliştirme becerileri ve ağ yönetimi birleşimi.</p>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-center">
+                <div class="card p-6 rounded-lg">
+                     <div class="chart-container">
+                        <canvas id="skillsChart"></canvas>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                    <!-- Responsive skill boxes to prevent overflow -->
+                    <div class="card p-4 rounded-lg text-center hover:bg-gray-700 transition-all cursor-pointer">
+                        <p class="font-semibold neon-glow truncate">Linux</p>
+                        <p class="text-sm" style="color: var(--text-faded);" data-key="skill_level_advanced">İleri Düzey</p>
+                    </div>
+                    <div class="card p-4 rounded-lg text-center hover:bg-gray-700 transition-all cursor-pointer">
+                        <p class="font-semibold neon-glow truncate" title="Firewall, NAC, SIEM">FW/NAC/SIEM</p>
+                        <p class="text-sm" style="color: var(--text-faded);" data-key="skill_level_advanced">İleri Düzey</p>
+                    </div>
+                    <div class="card p-4 rounded-lg text-center hover:bg-gray-700 transition-all cursor-pointer">
+                        <p class="font-semibold neon-glow truncate">Sızma Testleri</p>
+                        <p class="text-sm" style="color: var(--text-faded);" data-key="skill_level_intermediate">Orta Düzey</p>
+                    </div>
+                    <div class="card p-4 rounded-lg text-center hover:bg-gray-700 transition-all cursor-pointer">
+                        <p class="font-semibold neon-glow truncate">React</p>
+                        <p class="text-sm" style="color: var(--text-faded);" data-key="skill_level_intermediate">Orta Düzey</p>
+                    </div>
+                    <div class="card p-4 rounded-lg text-center hover:bg-gray-700 transition-all cursor-pointer">
+                        <p class="font-semibold neon-glow truncate">Kotlin</p>
+                        <p class="text-sm" style="color: var(--text-faded);" data-key="skill_level_intermediate">Orta Düzey</p>
+                    </div>
+                    <div class="card p-4 rounded-lg text-center hover:bg-gray-700 transition-all cursor-pointer">
+                        <p class="font-semibold neon-glow truncate" title="SQL, Firebase">SQL/Firebase</p>
+                        <p class="text-sm" style="color: var(--text-faded);" data-key="skill_level_proficient">Yetkin</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section id="projects" class="scroll-mt-20 py-16 md:py-24 section-hidden">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold neon-glow" data-key="projects_title">Öne Çıkan Projeler</h2>
+                <p class="mt-4 text-lg" style="color: var(--text-faded);" data-key="projects_intro">Karmaşık zorlukları güvenli, verimli çözümlere dönüştürmek.</p>
+            </div>
+            <div class="card rounded-lg overflow-hidden">
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 border-b" style="border-color: var(--card-border);">
+                    <button class="project-tab flex-1 p-4 font-semibold text-accent-color border-b-2" style="border-color: var(--accent-color);" data-project="iga" data-key="project_tab_iga">İGA Havalimanı OT Güvenliği</button>
+                    <button class="project-tab flex-1 p-4 font-medium" style="color: var(--text-faded);" data-project="ivedik" data-key="project_tab_ivedik">İvedik OSB Projesi</button>
+                    <button class="project-tab flex-1 p-4 font-medium" style="color: var(--text-faded);" data-project="tcdd" data-key="project_tab_tcdd">TCDD TEİAŞ</button>
+                    <button class="project-tab flex-1 p-4 font-medium" style="color: var(--text-faded);" data-project="travel" data-key="project_tab_travel">Seyahat Uygulaması</button>
+                    <button class="project-tab flex-1 p-4 font-medium" style="color: var(--text-faded);" data-project="recipes" data-key="project_tab_recipes">Yemek Tarifleri</button>
+                    <button class="project-tab flex-1 p-4 font-medium" style="color: var(--text-faded);" data-project="devops" data-key="project_tab_devops">DevOps Otomasyonu</button>
+                </div>
+                <div id="project-content" class="p-8">
+                    <div class="project-details" id="iga-content">
+                        <h3 class="text-2xl font-bold neon-glow" data-key="project_iga_title">İstanbul Havalimanı (IGA) OT Güvenliği</h3>
+                        <p class="mt-4 text-base leading-relaxed" style="color: var(--text-primary);" data-key="project_iga_desc">
+                           Dünyanın en büyük havalimanlarından biri olan İstanbul Havalimanı'nda, Operasyonel Teknoloji (OT) ve Endüstriyel Kontrol Sistemleri'nin (ICS) güvenliğini sağlamada kilit bir rol üstlendim. Proje kapsamında, havalimanının kritik operasyonlarını yöneten ağı korumak için kapsamlı bir güvenlik altyapısının kurulumda yer aldım. Bu süreçte FortiNAC (NAC) ve Nozomi gibi çözümleri kullanarak, ağ erişim kontrolü ve tehdit algılama mekanizmalarını güçlendirdim.
+                        </p>
+                    </div>
+                    <div class="project-details hidden" id="ivedik-content">
+                        <h3 class="text-2xl font-bold neon-glow" data-key="project_ivedik_title">İvedik Organize Sanayi Bölgesi (İOSB) OT Güvenliği</h3>
+                        <p class="mt-4 text-base leading-relaxed" style="color: var(--text-primary);" data-key="project_ivedik_desc">
+                           İvedik Organize Sanayi Bölgesi'nin (İOSB) kritik ağ altyapısını güçlendirmek ve siber güvenliğini sağlamak amacıyla yürütülen projede yer aldım. Sanayi bölgelerindeki endüstriyel kontrol sistemlerinin (ICS) benzersiz güvenlik ihtiyaçlarına odaklanarak, ağ topolojisi analizi ve zafiyet değerlendirmeleri gerçekleştirdim. Proje, endüstriyel operasyonların kesintisiz ve güvenli bir şekilde sürdürülmesi için özel olarak tasarlanmış güvenlik politikalarının oluşturulması ve uygulanmasını içeriyordu.
+                        </p>
+                    </div>
+                    <div class="project-details hidden" id="tcdd-content">
+                        <h3 class="text-2xl font-bold neon-glow" data-key="project_tcdd_title">TCDD ve TEİAŞ Ağ Güvenlik ve Altyapı İyileştirme</h3>
+                        <p class="mt-4 text-base leading-relaxed" style="color: var(--text-primary);" data-key="project_tcdd_desc">
+                            Türkiye'nin kritik altyapı kuruluşlarından TCDD ve TEİAŞ'ın ağ güvenlik ve altyapı projelerinde önemli sorumluluklar üstlendim. Bu projeler kapsamında, mevcut ağ topolojilerini analiz ettim, güvenlik açıklarını tespit ettim ve kurumların operasyonel sürekliliğini sağlamak için yeni nesil güvenlik çözümlerini entegre ettim. Özellikle SCADA sistemleri gibi hassas yapıların korunmasına yönelik özelleştirilmiş çözümler geliştirdim ve uyguladım. Bu çalışmalar, ulusal güvenlik standartlarına uygun, dayanıklı ve güvenilir bir ağ altyapısının oluşturulmasına katkı sağladı.
+                        </p>
+                    </div>
+                    <div class="project-details hidden" id="travel-content">
+                        <h3 class="text-2xl font-bold neon-glow" data-key="project_travel_title">Seyahat Rezervasyon Uygulaması</h3>
+                        <p class="mt-4 text-base leading-relaxed" style="color: var(--text-primary);" data-key="project_travel_desc">
+                            Bu mobil veya web uygulaması, kullanıcıların seyahat planlarını kolayca yönetmelerini sağlar. Uygulama, kullanıcıların tercih ettikleri şehirleri seçip seyahat listeleri oluşturmasına, yolculuk detaylarını görüntülemesine ve rezervasyon işlemlerini tamamlamasına olanak tanır. Ayrıca, haritalama entegrasyonu sayesinde kullanıcılar, önemli lokasyonları kaydedebilir ve rotalarını belirleyebilirler. Bu projede kullanıcı deneyimi (UX/UI) ve fonksiyonellik ön planda tutulmuştur.
+                        </p>
+                    </div>
+                    <div class="project-details hidden" id="recipes-content">
+                        <h3 class="text-2xl font-bold neon-glow" data-key="project_recipes_title">Yemek Tarifleri Uygulaması</h3>
+                        <p class="mt-4 text-base leading-relaxed" style="color: var(--text-primary);" data-key="project_recipes_desc">
+                           Bu proje, yemek yapmayı sevenler için bir çözüm sunar. Uygulama, yemek tarifi kütüphanesini barındırır ve kullanıcıların tarifleri kolayca listeleyip aramasını sağlar. Kullanıcılar, kendi tariflerini ekleyebilir, mevcut tarifleri güncelleyebilir veya silebilir. Bu proje, CRUD (Oluşturma, Okuma, Güncelleme, Silme) operasyonlarının etkin bir şekilde kullanıldığı ve veritabanı yönetiminin temel alındığı bir yapıdır.
+                        </p>
+                    </div>
+                    <div class="project-details hidden" id="devops-content">
+                        <h3 class="text-2xl font-bold neon-glow" data-key="project_devops_title">DevOps Otomasyon Projesi</h3>
+                        <p class="mt-4 text-base leading-relaxed" style="color: var(--text-primary);" data-key="project_devops_desc">
+                            Bu proje, bir DevOps sürecinin baştan sona nasıl otomatize edilebileceğini gösterir. Farklı araçları ve adımları bir araya getirerek, sürekli entegrasyon (CI) ve sürekli dağıtım (CD) gibi temel DevOps prensiplerini uyguladım. Projede, kodun GitHub üzerinden otomatik olarak test edilmesi, derlenmesi ve sunuculara dağıtılması gibi adımlar yer alır. Bu çalışma, yazılım geliştirme döngüsünü hızlandırmak ve daha verimli hale getirmek için otomasyonun gücünü sergiler.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Experience Section -->
+        <section id="experience" class="scroll-mt-20 py-16 md:py-24 section-hidden">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold neon-glow" data-key="experience_title">Mesleki Deneyim</h2>
+                <p class="mt-4 text-lg" style="color: var(--text-faded);" data-key="experience_intro">Teknoloji endüstrisinde bir büyüme ve etki yolculuğu.</p>
+            </div>
+            <div class="relative border-l-2" style="border-color: var(--accent-color);">
+                
+                <!-- Kontrolmatik Experience -->
+                <div class="mb-8 ml-8">
+                    <div class="absolute -left-4 mt-1.5 w-8 h-8 rounded-full border-4" style="background-color: var(--accent-color); border-color: var(--bg-primary);"></div>
+                    <p class="text-sm font-semibold neon-glow" data-key="exp_date_1">Mayıs 2024 - Günümüz</p>
+                    <h3 class="text-xl font-bold neon-glow" data-key="exp_title_1">Bilgisayar Mühendisi</h3>
+                    <p class="text-md font-medium" style="color: var(--text-faded);" data-key="exp_company_1">Kontrolmatik Teknoloji - İletişim ve Siber Güvenlik Departmanı, İstanbul / Türkiye</p>
+                    <ul class="mt-2 list-disc list-inside text-base">
+                        <li style="color: var(--text-primary);" data-key="exp_desc_1_1">Ağ ve siber güvenlik çözümlerinin geliştirilmesi ve yönetimi süreçlerinde aktif olarak rol aldım.</li>
+                        <li style="color: var(--text-primary);" data-key="exp_desc_1_2">Firewall, NAC, SIEM, Switch ve Router gibi ağ altyapı bileşenlerinin kurulum, konfigürasyon ve entegrasyon işlemlerini başarıyla gerçekleştirdim.</li>
+                        <li style="color: var(--text-primary);" data-key="exp_desc_1_3">VirtualBox ve Hyper-V üzerinde test ve simülasyon ortamları oluşturarak, potansiyel güvenlik açıklarının tespitini sağladım.</li>
+                        <li style="color: var(--text-primary);" data-key="exp_desc_1_4">Ağ zafiyet taramaları ve sızma (penetrasyon) testleri uygulayarak sistemlerdeki güvenlik açıklarını belirledim ve çözüm önerileri sundum.</li>
+                        <li style="color: var(--text-primary);" data-key="exp_desc_1_5">Proje mimarisi/topolojisi çizimlerinden ürün seçimine ve satın alma süreçlerine kadar proje döngüsünün her aşamasında yer aldım.</li>
+                        <li style="color: var(--text-primary);" data-key="exp_desc_1_6">Operasyonel Teknoloji (OT) güvenlik standartlarını projelere entegre ederek endüstriyel sistemlerin korunmasına katkıda bulundum.</li>
+                        <li style="color: var(--text-primary);" data-key="exp_desc_1_7">Müşteri toplantıları düzenleyerek ihtiyaç analizleri gerçekleştirdim ve yeni müşteri kazanımı süreçlerine destek oldum.</li>
+                    </ul>
+                </div>
+
+                <!-- Biocoder Teknoloji Experience -->
+                <div class="mb-8 ml-8">
+                    <div class="absolute -left-4 mt-1.5 w-8 h-8 rounded-full border-4" style="background-color: var(--accent-color); border-color: var(--bg-primary);"></div>
+                    <p class="text-sm font-semibold neon-glow" data-key="exp_date_2">Mar 2024 – May 2024</p>
+                    <h3 class="text-xl font-bold neon-glow" data-key="exp_title_2">Stajyer - Biocoder Teknoloji</h3>
+                    <p class="text-md font-medium" style="color: var(--text-faded);" data-key="exp_company_2">Mersin / Türkiye</p>
+                    <ul class="mt-2 list-disc list-inside text-base">
+                        <li style="color: var(--text-primary);" data-key="exp_desc_2_1">Gömülü yazılım ve elektronik sistemler alanında Ar-Ge çalışmaları yapan şirkette Android Developer olarak görev aldım.</li>
+                        <li style="color: var(--text-primary);" data-key="exp_desc_2_2">Şirketin ihtiyaçlarına yönelik mobil uygulamasını baştan sona geliştirerek yayımladım.</li>
+                        <li style="color: var(--text-primary);" data-key="exp_desc_2_3">Mevcut uygulamaların bakımını üstlendim ve yeni özelliklerin eklenmesi gibi görevlerde aktif rol aldım.</li>
+                        <li style="color: var(--text-primary);" data-key="exp_desc_2_4">Takım içi işbirliği ile projelerin zamanında ve başarıyla tamamlanmasına önemli katkılarda bulundum.</li>
+                    </ul>
+                </div>
+
+                <!-- Gaziosmanpaşa Üniversitesi Experience -->
+                <div class="mb-8 ml-8">
+                    <div class="absolute -left-4 mt-1.5 w-8 h-8 rounded-full border-4" style="background-color: var(--accent-color); border-color: var(--bg-primary);"></div>
+                    <p class="text-sm font-semibold neon-glow" data-key="exp_date_3">Tem 2023 – Eyl 2023</p>
+                    <h3 class="text-xl font-bold neon-glow" data-key="exp_title_3">Stajyer - Gaziosmanpaşa Üniversitesi – Bilgi İşlem Daire Başkanlığı</h3>
+                    <p class="text-md font-medium" style="color: var(--text-faded);" data-key="exp_company_3">Tokat / Türkiye</p>
+                    <ul class="mt-2 list-disc list-inside text-base">
+                        <li style="color: var(--text-primary);" data-key="exp_desc_3_1">Active Directory ile kullanıcı kimlik doğrulama süreçlerini yönettim ve geliştirdim.</li>
+                        <li style="color: var(--text-primary);" data-key="exp_desc_3_2">Bilgisayar sorunlarını çözmede önemli sorumluluklar alarak, kullanıcılara hızlı ve etkili teknik destek sağladım.</li>
+                        <li style="color: var(--text-primary);" data-key="exp_desc_3_3">Verilerin güvenli bir şekilde yedeklenmesi ve imaj alma/dağıtım işlemlerini gerçekleştirdim.</li>
+                    </ul>
+                </div>
+
+            </div>
+        </section>
+        
+    </main>
+    
+    <!-- Footer/Contact Section -->
+    <footer id="contact" class="mt-16 border-t scroll-mt-20" style="background-color: var(--bg-primary); border-color: var(--card-border);">
+        <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold neon-glow" data-key="footer_cta">İletişim</h2>
+            <p class="mt-2" style="color: var(--text-faded);" data-key="footer_text">İşbirlikleri veya sadece arkadaşça bir sohbet için ulaşmaktan çekinmeyin.</p>
+            <div class="mt-6 flex justify-center space-x-6">
+                <!-- Social media icons - using SVG from Tailwind CSS examples -->
+                <a href="https://github.com/ahmetgurr" target="_blank" class="transition-colors" style="color: var(--text-faded);">
+                    <span class="sr-only">GitHub</span>
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.168 6.839 9.49.5.092.682-.217.682-.482 0-.237-.009-.868-.014-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.031-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.338 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.001 10.001 0 0022 12c0-5.523-4.477-10-10-10z" clip-rule="evenodd" /></svg>
+                </a>
+                <a href="https://linkedin.com/in/ahmetgur" target="_blank" class="transition-colors" style="color: var(--text-faded);">
+                    <span class="sr-only">LinkedIn</span>
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" clip-rule="evenodd" /></svg>
+                </a>
+                 <a href="https://tryhackme.com/p/ahmetgur" target="_blank" class="transition-colors" style="color: var(--text-faded);">
+                    <span class="sr-only">TryHackMe</span>
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1.5 14.5v-9l7.5 4.5-7.5 4.5z"/></svg>
+                </a>
+            </div>
+            <p class="mt-8 text-center text-base" style="color: var(--text-faded);">&copy; 2025 Ahmet Gür. Tüm hakları saklıdır.</p>
+        </div>
+    </footer>
+
+
+<script>
+    class PortfolioApp {
+        constructor() {
+            // Content data for localization
+            this.content = {
+                tr: {
+                    nav_profile: "Profil",
+                    nav_skills: "Yetenekler",
+                    nav_projects: "Projeler",
+                    nav_experience: "Deneyim",
+                    nav_contact: "İletişim",
+                    hero_title: "AHMET GÜR",
+                    hero_subtitle: "Bilgisayar Mühendisi & Siber Güvenlik Uzmanı",
+                    hero_description: "IT ve OT ortamları için kritik ağ altyapılarını tasarlama ve yeni nesil siber tehditlere karşı koruma tutkusuna sahibim.",
+                    hero_contact_btn: "İletişime Geç",
+                    hero_linkedin_btn: "LinkedIn",
+                    profile_title: "Profil",
+                    profile_intro: "Mükemmelliğe ve sürekli öğrenmeye adanmış bir mühendis.",
+                    profile_text: `Siber güvenlik ve ağ teknolojilerine güçlü bir şekilde odaklanan bir Bilgisayar Mühendisiyim. İletişim ve Siber Güvenlik alanında bir yılı aşkın uygulamalı deneyime sahibim. Uzmanlığım Firewall, NAC, SIEM ve EDR gibi güvenlik çözümlerinin yanı sıra Switch ve Router gibi ağ altyapı bileşenlerinin kurulumu, yapılandırılması ve entegrasyonu üzerine kurulmuştur.
+                    Ağ zafiyet taramaları, sanallaştırma platformları ve çoklu işletim sistemi güvenlik testleri dahil olmak üzere, hem IT hem de OT Güvenlik projelerinde kanıtlanmış bir geçmişe sahibim. Analitik problem çözme becerilerim, dinamik ortamlara hızlı uyum sağlama yeteneğim ve net iletişimim ile tanınıyorum. Kariyerim boyunca sürekli mesleki gelişime ve her projeye ölçülebilir değer katmaya kararlıyım.`,
+                    skills_title: "Temel Yetkinlikler",
+                    skills_intro: "Siber güvenlik uzmanlığı, geliştirme becerileri ve ağ yönetimi birleşimi.",
+                    skill_level_advanced: "İleri Düzey",
+                    skill_level_intermediate: "Orta Düzey",
+                    skill_level_proficient: "Yetkin",
+                    skills_chart_label: "Yetenek Seviyesi",
+                    skills_chart_areas: ["Siber Güvenlik", "Ağ Yönetimi", "Backend Geliştirme", "Web/Frontend", "Veritabanları", "Sanallaştırma"],
+                    projects_title: "Öne Çıkan Projeler",
+                    projects_intro: "Karmaşık zorlukları güvenli, verimli çözümlere dönüştürmek.",
+                    project_tab_iga: "İGA Havalimanı OT Güvenliği",
+                    project_tab_ivedik: "İvedik OSB Projesi",
+                    project_tab_tcdd: "TCDD TEİAŞ",
+                    project_tab_travel: "Seyahat Uygulaması",
+                    project_tab_recipes: "Yemek Tarifleri",
+                    project_tab_devops: "DevOps Otomasyonu",
+                    project_iga_title: "İstanbul Havalimanı (IGA) OT Güvenliği",
+                    project_iga_desc: "Dünyanın en büyük havalimanlarından biri olan İstanbul Havalimanı'nda, Operasyonel Teknoloji (OT) ve Endüstriyel Kontrol Sistemleri'nin (ICS) güvenliğini sağlamada kilit bir rol üstlendim. Proje kapsamında, havalimanının kritik operasyonlarını yöneten ağı korumak için kapsamlı bir güvenlik altyapısının kurulumda yer aldım. Bu süreçte FortiNAC (NAC) ve Nozomi gibi çözümleri kullanarak, ağ erişim kontrolü ve tehdit algılama mekanizmalarını güçlendirdim.",
+                    project_ivedik_title: "İvedik Organize Sanayi Bölgesi (İOSB) OT Güvenliği",
+                    project_ivedik_desc: "İvedik Organize Sanayi Bölgesi'nin (İOSB) kritik ağ altyapısını güçlendirmek ve siber güvenliğini sağlamak amacıyla yürütülen projede yer aldım. Sanayi bölgelerindeki endüstriyel kontrol sistemlerinin (ICS) benzersiz güvenlik ihtiyaçlarına odaklanarak, ağ topolojisi analizi ve zafiyet değerlendirmeleri gerçekleştirdim. Proje, endüstriyel operasyonların kesintisiz ve güvenli bir şekilde sürdürülmesi için özel olarak tasarlanmış güvenlik politikalarının oluşturulması ve uygulanmasını içeriyordu.",
+                    project_tcdd_title: "TCDD ve TEİAŞ Ağ Güvenlik ve Altyapı İyileştirme",
+                    project_tcdd_desc: "Türkiye'nin kritik altyapı kuruluşlarından TCDD ve TEİAŞ'ın ağ güvenlik ve altyapı projelerinde önemli sorumluluklar üstlendim. Bu projeler kapsamında, mevcut ağ topolojilerini analiz ettim, güvenlik açıklarını tespit ettim ve kurumların operasyonel sürekliliğini sağlamak için yeni nesil güvenlik çözümlerini entegre ettim. Özellikle SCADA sistemleri gibi hassas yapıların korunmasına yönelik özelleştirilmiş çözümler geliştirdim ve uyguladım. Bu çalışmalar, ulusal güvenlik standartlarına uygun, dayanıklı ve güvenilir bir ağ altyapısının oluşturulmasına katkı sağladı.",
+                    project_travel_title: "Seyahat Rezervasyon Uygulaması",
+                    project_travel_desc: "Bu mobil veya web uygulaması, kullanıcıların seyahat planlarını kolayca yönetmelerini sağlar. Uygulama, kullanıcıların tercih ettikleri şehirleri seçip seyahat listeleri oluşturmasına, yolculuk detaylarını görüntülemesine ve rezervasyon işlemlerini tamamlamasına olanak tanır. Ayrıca, haritalama entegrasyonu sayesinde kullanıcılar, önemli lokasyonları kaydedebilir ve rotalarını belirleyebilirler. Bu projede kullanıcı deneyimi (UX/UI) ve fonksiyonellik ön planda tutulmuştur.",
+                    project_recipes_title: "Yemek Tarifleri Uygulaması",
+                    project_recipes_desc: "Bu proje, yemek yapmayı sevenler için bir çözüm sunar. Uygulama, yemek tarifi kütüphanesini barındırır ve kullanıcıların tarifleri kolayca listeleyip aramasını sağlar. Kullanıcılar, kendi tariflerini ekleyebilir, mevcut tarifleri güncelleyebilir veya silebilir. Bu proje, CRUD (Oluşturma, Okuma, Güncelleme, Silme) operasyonlarının etkin bir şekilde kullanıldığı ve veritabanı yönetiminin temel alındığı bir yapıdır.",
+                    project_devops_title: "DevOps Otomasyon Projesi",
+                    project_devops_desc: "Bu proje, bir DevOps sürecinin baştan sona nasıl otomatize edilebileceğini gösterir. Farklı araçları ve adımları bir araya getirerek, sürekli entegrasyon (CI) ve sürekli dağıtım (CD) gibi temel DevOps prensiplerini uyguladım. Projede, kodun GitHub üzerinden otomatik olarak test edilmesi, derlenmesi ve sunuculara dağıtılması gibi adımlar yer alır. Bu çalışma, yazılım geliştirme döngüsünü hızlandırmak ve daha verimli hale getirmek için otomasyonun gücünü sergiler.",
+                    experience_title: "Mesleki Deneyim",
+                    experience_intro: "Teknoloji endüstrisinde bir büyüme ve etki yolculuğu.",
+                    exp_date_1: "Mayıs 2024 - Günümüz",
+                    exp_title_1: "Bilgisayar Mühendisi",
+                    exp_company_1: "Kontrolmatik Teknoloji - İletişim ve Siber Güvenlik Departmanı, İstanbul / Türkiye",
+                    exp_desc_1_1: "Ağ ve siber güvenlik çözümlerinin geliştirilmesi ve yönetimi süreçlerinde aktif olarak rol aldım.",
+                    exp_desc_1_2: "Firewall, NAC, SIEM, Switch ve Router gibi ağ altyapı bileşenlerinin kurulum, konfigürasyon ve entegrasyon işlemlerini başarıyla gerçekleştirdim.",
+                    exp_desc_1_3: "VirtualBox ve Hyper-V üzerinde test ve simülasyon ortamları oluşturarak, potansiyel güvenlik açıklarının tespitini sağladım.",
+                    exp_desc_1_4: "Ağ zafiyet taramaları ve sızma (penetrasyon) testleri uygulayarak sistemlerdeki güvenlik açıklarını belirledim ve çözüm önerileri sundum.",
+                    exp_desc_1_5: "Proje mimarisi/topolojisi çizimlerinden ürün seçimine ve satın alma süreçlerine kadar proje döngüsünün her aşamasında yer aldım.",
+                    exp_desc_1_6: "Operasyonel Teknoloji (OT) güvenlik standartlarını projelere entegre ederek endüstriyel sistemlerin korunmasına katkıda bulundum.",
+                    exp_desc_1_7: "Müşteri toplantıları düzenleyerek ihtiyaç analizleri gerçekleştirdim ve yeni müşteri kazanımı süreçlerine destek oldum.",
+                    exp_date_2: "Mar 2024 – May 2024",
+                    exp_title_2: "Stajyer - Biocoder Teknoloji",
+                    exp_company_2: "Mersin / Türkiye",
+                    exp_desc_2_1: "Gömülü yazılım ve elektronik sistemler alanında Ar-Ge çalışmaları yapan şirkette Android Developer olarak görev aldım.",
+                    exp_desc_2_2: "Şirketin ihtiyaçlarına yönelik mobil uygulamasını baştan sona geliştirerek yayımladım.",
+                    exp_desc_2_3: "Mevcut uygulamaların bakımını üstlendim ve yeni özelliklerin eklenmesi gibi görevlerde aktif rol aldım.",
+                    exp_desc_2_4: "Takım içi işbirliği ile projelerin zamanında ve başarıyla tamamlanmasına önemli katkılarda bulundum.",
+                    exp_date_3: "Tem 2023 – Eyl 2023",
+                    exp_title_3: "Stajyer - Gaziosmanpaşa Üniversitesi – Bilgi İşlem Daire Başkanlığı",
+                    exp_company_3: "Tokat / Türkiye",
+                    exp_desc_3_1: "Active Directory ile kullanıcı kimlik doğrulama süreçlerini yönettim ve geliştirdim.",
+                    exp_desc_3_2: "Bilgisayar sorunlarını çözmede önemli sorumluluklar alarak, kullanıcılara hızlı ve etkili teknik destek sağladım.",
+                    exp_desc_3_3: "Verilerin güvenli bir şekilde yedeklenmesi ve imaj alma/dağıtım işlemlerini gerçekleştirdim.",
+                    footer_cta: "İletişim",
+                    footer_text: "İşbirlikleri veya sadece arkadaşça bir sohbet için ulaşmaktan çekinmeyin."
+                },
+                en: {
+                    nav_profile: "Profile",
+                    nav_skills: "Skills",
+                    nav_projects: "Projects",
+                    nav_experience: "Experience",
+                    nav_contact: "Contact",
+                    hero_title: "AHMET GÜR",
+                    hero_subtitle: "Computer Engineer & Cybersecurity Specialist",
+                    hero_description: "I have a passion for designing critical network infrastructures for IT and OT environments and protecting them against next-generation cyber threats.",
+                    hero_contact_btn: "Contact Me",
+                    hero_linkedin_btn: "LinkedIn",
+                    profile_title: "Profile",
+                    profile_intro: "A dedicated engineer committed to excellence and continuous learning.",
+                    profile_text: `I am a Computer Engineer with a strong focus on cybersecurity and network technologies, and I have over a year of hands-on experience in the Communication and Cybersecurity domain. My expertise is built upon the installation, configuration, and integration of security solutions such as Firewall, NAC, SIEM, and EDR, as well as network infrastructure components like Switches and Routers.
+                    A proven track record in both IT and OT Security projects, including network vulnerability scanning, virtualization platforms, and multi-OS security testing. I am known for my analytical problem-solving skills, my ability to quickly adapt to dynamic environments, and my clear communication. Throughout my career, I am committed to continuous professional growth and adding measurable value to every project.`,
+                    skills_title: "Core Competencies",
+                    skills_intro: "A blend of cybersecurity expertise, development skills, and network management.",
+                    skill_level_advanced: "Advanced",
+                    skill_level_intermediate: "Intermediate",
+                    skill_level_proficient: "Proficient",
+                    skills_chart_label: "Skill Level",
+                    skills_chart_areas: ["Cyber Security", "Networking", "Backend Dev", "Web/Frontend", "Databases", "Virtualization"],
+                    projects_title: "Featured Projects",
+                    projects_intro: "Transforming complex challenges into secure, efficient solutions.",
+                    project_tab_iga: "IGA Airport OT Security",
+                    project_tab_ivedik: "Ivedik OSB Project",
+                    project_tab_tcdd: "TCDD & TEIAS",
+                    project_tab_travel: "Travel App",
+                    project_tab_recipes: "Recipe App",
+                    project_tab_devops: "DevOps Automation",
+                    project_iga_title: "Istanbul Airport (IGA) OT Security",
+                    project_iga_desc: "At Istanbul Airport (IGA), one of the world's largest airports, I took on a key role in ensuring the security of Operational Technology (OT) and Industrial Control Systems (ICS). As part of the project, I was involved in the installation of a comprehensive security infrastructure to protect the network managing the airport's critical operations. In this process, I used solutions such as FortiNAC (NAC) and Nozomi to strengthen network access control and threat detection mechanisms.",
+                    project_ivedik_title: "Ivedik Organized Industrial Zone (IOSB) OT Security",
+                    project_ivedik_desc: "I was involved in a project aimed at strengthening the critical network infrastructure and ensuring the cybersecurity of the Ivedik Organized Industrial Zone (IOSB). Focusing on the unique security needs of industrial control systems (ICS) in industrial zones, I conducted network topology analysis and vulnerability assessments. The project included the creation and implementation of security policies specifically designed to maintain the continuous and secure operation of industrial operations.",
+                    project_tcdd_title: "TCDD and TEIAS Network Security and Infrastructure Improvement",
+                    project_tcdd_desc: "I took on significant responsibilities in network security and infrastructure projects for TCDD and TEIAS, two of Turkey's critical infrastructure organizations. Within these projects, I analyzed existing network topologies, identified security vulnerabilities, and integrated next-generation security solutions to ensure the operational continuity of the institutions. I developed and implemented customized solutions, especially for the protection of sensitive structures like SCADA systems. These efforts contributed to the creation of a durable and reliable network infrastructure that complies with national security standards.",
+                    project_travel_title: "Travel Reservation Application",
+                    project_travel_desc: "This mobile or web application allows users to easily manage their travel plans. The app enables users to select their preferred cities, create travel lists, view journey details, and complete reservation processes. Additionally, with mapping integration, users can save important locations and determine their routes. User experience (UX/UI) and functionality were prioritized in this project.",
+                    project_recipes_title: "Recipe Application",
+                    project_recipes_desc: "This project provides a solution for those who love to cook. The app houses a library of food recipes and allows users to easily list and search for recipes. Users can add their own recipes, update existing ones, or delete them. This project is a structure where CRUD (Create, Read, Update, Delete) operations are used effectively and database management is a core principle.",
+                    project_devops_title: "DevOps Automation Project",
+                    project_devops_desc: "This project demonstrates how a DevOps process can be automated from start to finish. By bringing together different tools and steps, I applied fundamental DevOps principles such as continuous integration (CI) and continuous deployment (CD). The project includes steps like automatically testing code from GitHub, compiling it, and deploying it to servers. This work showcases the power of automation to accelerate and make the software development lifecycle more efficient.",
+                    experience_title: "Professional Experience",
+                    experience_intro: "A journey of growth and impact in the tech industry.",
+                    exp_date_1: "May 2024 - Present",
+                    exp_title_1: "Computer Engineer",
+                    exp_company_1: "Kontrolmatik Technology - Communication and Cybersecurity Department, Istanbul / Türkiye",
+                    exp_desc_1_1: "Actively participated in the development and management processes of network and cybersecurity solutions.",
+                    exp_desc_1_2: "Successfully performed the installation, configuration, and integration of network infrastructure components like Firewall, NAC, SIEM, Switch, and Router.",
+                    exp_desc_1_3: "Created test and simulation environments on VirtualBox and Hyper-V to enable the detection of potential security vulnerabilities.",
+                    exp_desc_1_4: "Applied network vulnerability scans and penetration tests to identify security flaws in systems and provided solution proposals.",
+                    exp_desc_1_5: "Was involved in every stage of the project lifecycle, from drawing project architecture/topology to product selection and procurement processes.",
+                    exp_desc_1_6: "Contributed to the protection of industrial systems by integrating Operational Technology (OT) security standards into projects.",
+                    exp_desc_1_7: "Conducted needs analysis by holding customer meetings and supported new customer acquisition processes.",
+                    exp_date_2: "Mar 2024 – May 2024",
+                    exp_title_2: "Intern - Biocoder Technology",
+                    exp_company_2: "Mersin / Türkiye",
+                    exp_desc_2_1: "I worked as an Android Developer at a company that conducts R&D in embedded software and electronic systems.",
+                    exp_desc_2_2: "I developed and published the company's mobile application from scratch to meet its needs.",
+                    exp_desc_2_3: "I was responsible for the maintenance of existing applications and actively participated in tasks such as adding new features.",
+                    exp_desc_2_4: "I made significant contributions to the timely and successful completion of projects through teamwork.",
+                    exp_date_3: "Tem 2023 – Eyl 2023",
+                    exp_title_3: "Intern - Gaziosmanpaşa University – IT Department",
+                    exp_company_3: "Tokat / Türkiye",
+                    exp_desc_3_1: "I managed and developed user authentication processes with Active Directory.",
+                    exp_desc_3_2: "I took on important responsibilities in solving computer problems, providing fast and effective technical support to users.",
+                    exp_desc_3_3: "I performed secure data backup and image capture/deployment operations.",
+                    footer_cta: "Contact",
+                    footer_text: "Feel free to reach out for collaborations or just a friendly chat."
+                }
+            };
+            this.currentLang = 'tr';
+            this.skillsChart = null;
+            this.projectsData = {
+                iga: {
+                    tr: { title: "İstanbul Havalimanı (IGA) OT Güvenliği", desc: "Dünyanın en büyük havalimanlarından biri olan İstanbul Havalimanı'nda, Operasyonel Teknoloji (OT) ve Endüstriyel Kontrol Sistemleri'nin (ICS) güvenliğini sağlamada kilit bir rol üstlendim. Proje kapsamında, havalimanının kritik operasyonlarını yöneten ağı korumak için kapsamlı bir güvenlik altyapısının kurulumda yer aldım. Bu süreçte FortiNAC (NAC) ve Nozomi gibi çözümleri kullanarak, ağ erişim kontrolü ve tehdit algılama mekanizmalarını güçlendirdim." },
+                    en: { title: "Istanbul Airport (IGA) OT Security", desc: "At Istanbul Airport (IGA), one of the world's largest airports, I took on a key role in ensuring the security of Operational Technology (OT) and Industrial Control Systems (ICS). As part of the project, I was involved in the installation of a comprehensive security infrastructure to protect the network managing the airport's critical operations. In this process, I used solutions such as FortiNAC (NAC) and Nozomi to strengthen network access control and threat detection mechanisms." }
+                },
+                ivedik: {
+                    tr: { title: "İvedik Organize Sanayi Bölgesi (İOSB) OT Güvenliği", desc: "İvedik Organize Sanayi Bölgesi'nin (İOSB) kritik ağ altyapısını güçlendirmek ve siber güvenliğini sağlamak amacıyla yürütülen projede yer aldım. Sanayi bölgelerindeki endüstriyel kontrol sistemlerinin (ICS) benzersiz güvenlik ihtiyaçlarına odaklanarak, ağ topolojisi analizi ve zafiyet değerlendirmeleri gerçekleştirdim. Proje, endüstriyel operasyonların kesintisiz ve güvenli bir şekilde sürdürülmesi için özel olarak tasarlanmış güvenlik politikalarının oluşturulması ve uygulanmasını içeriyordu." },
+                    en: { title: "Ivedik Organized Industrial Zone (IOSB) OT Security", desc: "I was involved in a project aimed at strengthening the critical network infrastructure and ensuring the cybersecurity of the Ivedik Organized Industrial Zone (IOSB). Focusing on the unique security needs of industrial control systems (ICS) in industrial zones, I conducted network topology analysis and vulnerability assessments. The project included the creation and implementation of security policies specifically designed to maintain the continuous and secure operation of industrial operations." }
+                },
+                tcdd: {
+                    tr: { title: "TCDD ve TEİAŞ Ağ Güvenlik ve Altyapı İyileştirme", desc: "Türkiye'nin kritik altyapı kuruluşlarından TCDD ve TEİAŞ'ın ağ güvenlik ve altyapı projelerinde önemli sorumluluklar üstlendim. Bu projeler kapsamında, mevcut ağ topolojilerini analiz ettim, güvenlik açıklarını tespit ettim ve kurumların operasyonel sürekliliğini sağlamak için yeni nesil güvenlik çözümlerini entegre ettim. Özellikle SCADA sistemleri gibi hassas yapıların korunmasına yönelik özelleştirilmiş çözümler geliştirdim ve uyguladım. Bu çalışmalar, ulusal güvenlik standartlarına uygun, dayanıklı ve güvenilir bir ağ altyapısının oluşturulmasına katkı sağladı." },
+                    en: { title: "TCDD and TEIAS Network Security and Infrastructure Improvement", desc: "I took on significant responsibilities in network security and infrastructure projects for TCDD and TEIAS, two of Turkey's critical infrastructure organizations. Within these projects, I analyzed existing network topologies, identified security vulnerabilities, and integrated next-generation security solutions to ensure the operational continuity of the institutions. I developed and implemented customized solutions, especially for the protection of sensitive structures like SCADA systems. These efforts contributed to the creation of a durable and reliable network infrastructure that complies with national security standards." }
+                },
+                travel: {
+                    tr: { title: "Seyahat Rezervasyon Uygulaması", desc: "Bu mobil veya web uygulaması, kullanıcıların seyahat planlarını kolayca yönetmelerini sağlar. Uygulama, kullanıcıların tercih ettikleri şehirleri seçip seyahat listeleri oluşturmasına, yolculuk detaylarını görüntülemesine ve rezervasyon işlemlerini tamamlamasına olanak tanır. Ayrıca, haritalama entegrasyonu sayesinde kullanıcılar, önemli lokasyonları kaydedebilir ve rotalarını belirleyebilirler. Bu projede kullanıcı deneyimi (UX/UI) ve fonksiyonellik ön planda tutulmuştur." },
+                    en: { title: "Travel Reservation Application", desc: "This mobile or web application allows users to easily manage their travel plans. The app enables users to select their preferred cities, create travel lists, view journey details, and complete reservation processes. Additionally, with mapping integration, users can save important locations and determine their routes. User experience (UX/UI) and functionality were prioritized in this project." }
+                },
+                recipes: {
+                    tr: { title: "Yemek Tarifleri Uygulaması", desc: "Bu proje, yemek yapmayı sevenler için bir çözüm sunar. Uygulama, yemek tarifi kütüphanesini barındırır ve kullanıcıların tarifleri kolayca listeleyip aramasını sağlar. Kullanıcılar, kendi tariflerini ekleyebilir, mevcut tarifleri güncelleyebilir veya silebilir. Bu proje, CRUD (Oluşturma, Okuma, Güncelleme, Silme) operasyonlarının etkin bir şekilde kullanıldığı ve veritabanı yönetiminin temel alındığı bir yapıdır." },
+                    en: { title: "Recipe Application", desc: "This project provides a solution for those who love to cook. The app houses a library of food recipes and allows users to easily list and search for recipes. Users can add their own recipes, update existing ones, or delete them. This project is a structure where CRUD (Create, Read, Update, Delete) operations are used effectively and database management is a core principle." }
+                },
+                devops: {
+                    tr: { title: "DevOps Otomasyon Projesi", desc: "Bu proje, bir DevOps sürecinin baştan sona nasıl otomatize edilebileceğini gösterir. Farklı araçları ve adımları bir araya getirerek, sürekli entegrasyon (CI) ve sürekli dağıtım (CD) gibi temel DevOps prensiplerini uyguladım. Projede, kodun GitHub üzerinden otomatik olarak test edilmesi, derlenmesi ve sunuculara dağıtılması gibi adımlar yer alır. Bu çalışma, yazılım geliştirme döngüsünü hızlandırmak ve daha verimli hale getirmek için otomasyonun gücünü sergiler." },
+                    en: { title: "DevOps Automation Project", desc: "This project demonstrates how a DevOps process can be automated from start to finish. By bringing together different tools and steps, I applied fundamental DevOps principles such as continuous integration (CI) and continuous deployment (CD). The project includes steps like automatically testing code from GitHub, compiling it, and deploying it to servers. This work showcases the power of automation to accelerate and make the software development lifecycle more efficient." }
+                }
+            };
+        }
+
+        init() {
+            this.addEventListeners();
+            this.updateContent();
+            this.initIntersectionObserver();
+            this.initChart();
+            this.handleProjectTab(document.querySelector('.project-tab[data-project="iga"]'));
+        }
+
+        addEventListeners() {
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => this.changeLanguage(e.target.id.split('-')[1]));
+            });
+            document.getElementById('theme-toggle').addEventListener('click', () => this.toggleTheme());
+            document.querySelectorAll('.project-tab').forEach(tab => {
+                tab.addEventListener('click', (e) => this.handleProjectTab(e.target));
+            });
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', (e) => this.handleScroll(e, e.target.getAttribute('href')));
+            });
+        }
+
+        updateContent() {
+            document.querySelectorAll('[data-key]').forEach(element => {
+                const key = element.getAttribute('data-key');
+                if (this.content[this.currentLang][key]) {
+                    element.innerHTML = this.content[this.currentLang][key];
+                }
+            });
+        }
+
+        changeLanguage(lang) {
+            this.currentLang = lang;
+            document.documentElement.lang = lang;
+            this.updateContent();
+            this.updateChart();
+            this.updateProjectContent();
+
+            document.getElementById('lang-tr').classList.toggle('neon-glow', lang === 'tr');
+            document.getElementById('lang-tr').classList.toggle('font-bold', lang === 'tr');
+            document.getElementById('lang-tr').classList.toggle('text-text-faded', lang !== 'tr');
+            document.getElementById('lang-tr').classList.toggle('font-medium', lang !== 'tr');
+
+            document.getElementById('lang-en').classList.toggle('neon-glow', lang === 'en');
+            document.getElementById('lang-en').classList.toggle('font-bold', lang === 'en');
+            document.getElementById('lang-en').classList.toggle('text-text-faded', lang !== 'en');
+            document.getElementById('lang-en').classList.toggle('font-medium', lang !== 'en');
+        }
+
+        toggleTheme() {
+            const body = document.body;
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            body.setAttribute('data-theme', newTheme);
+            
+            // Toggle icons
+            document.getElementById('moon-icon').classList.toggle('hidden');
+            document.getElementById('sun-icon').classList.toggle('hidden');
+
+            // Update chart colors
+            this.updateChart();
+        }
+        
+        updateProjectContent() {
+            const activeTab = document.querySelector('.project-tab.neon-glow');
+            if (activeTab) {
+                const projectKey = activeTab.dataset.project;
+                const projectContent = this.projectsData[projectKey][this.currentLang];
+                document.getElementById(`${projectKey}-content`).querySelector('h3').textContent = projectContent.title;
+                document.getElementById(`${projectKey}-content`).querySelector('p').textContent = projectContent.desc;
+            }
+        }
+
+        handleProjectTab(target) {
+            const project = target.dataset.project;
+            document.querySelectorAll('.project-tab').forEach(t => {
+                t.classList.remove('neon-glow', 'border-b-2', 'font-semibold');
+                t.style.borderColor = 'transparent';
+                t.style.color = 'var(--text-faded)';
+                t.classList.add('font-medium');
+            });
+            target.classList.add('neon-glow', 'border-b-2', 'font-semibold');
+            target.style.borderColor = 'var(--accent-color)';
+            target.style.color = 'var(--accent-color)';
+            target.classList.remove('font-medium');
+            document.querySelectorAll('.project-details').forEach(detail => {
+                detail.classList.add('hidden');
+            });
+            document.getElementById(`${project}-content`).classList.remove('hidden');
+            this.updateProjectContent();
+        }
+
+        handleScroll(e, targetId) {
+            e.preventDefault();
+            document.querySelector(targetId).scrollIntoView({
+                behavior: 'smooth'
+            });
+        }
+
+        initIntersectionObserver() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('section-visible');
+                        entry.target.classList.remove('section-hidden');
+                    }
+                });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('.section-hidden').forEach(section => observer.observe(section));
+        }
+
+        initChart() {
+            const ctx = document.getElementById('skillsChart').getContext('2d');
+            const chartData = {
+                labels: this.content[this.currentLang].skills_chart_areas,
+                datasets: [{
+                    label: this.content[this.currentLang].skills_chart_label,
+                    data: [90, 85, 70, 75, 80, 85],
+                    backgroundColor: 'rgba(0, 255, 65, 0.2)',
+                    borderColor: 'rgba(0, 255, 65, 1)',
+                    borderWidth: 2,
+                    pointBackgroundColor: 'rgba(0, 255, 65, 1)',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgba(0, 255, 65, 1)'
+                }]
+            };
+
+            const chartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        angleLines: { color: 'rgba(255, 255, 255, 0.2)' },
+                        grid: { color: 'rgba(255, 255, 255, 0.2)' },
+                        pointLabels: { color: '#c9d1d9', font: { family: 'Roboto Mono', size: 12 } },
+                        ticks: { color: '#c9d1d9', backdropColor: 'transparent', stepSize: 20 },
+                        suggestedMin: 0,
+                        suggestedMax: 100
+                    }
+                },
+                plugins: { legend: { display: false } }
+            };
+
+            this.skillsChart = new Chart(ctx, { type: 'radar', data: chartData, options: chartOptions });
+            this.updateChart();
+        }
+
+        updateChart() {
+            if (!this.skillsChart) return;
+            const currentTheme = document.body.getAttribute('data-theme');
+            const isDarkMode = currentTheme === 'dark';
+            
+            const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.1)';
+            const labelColor = isDarkMode ? '#d1d5db' : '#4b5563';
+            const chartBg = isDarkMode ? 'rgba(0, 255, 65, 0.2)' : 'rgba(49, 130, 206, 0.2)';
+            const chartBorder = isDarkMode ? 'rgba(0, 255, 65, 1)' : 'rgba(49, 130, 206, 1)';
+            const chartPointBg = isDarkMode ? 'rgba(0, 255, 65, 1)' : 'rgba(49, 130, 206, 1)';
+            
+            this.skillsChart.data.labels = this.content[this.currentLang].skills_chart_areas;
+            this.skillsChart.data.datasets[0].backgroundColor = chartBg;
+            this.skillsChart.data.datasets[0].borderColor = chartBorder;
+            this.skillsChart.data.datasets[0].pointBackgroundColor = chartPointBg;
+
+            this.skillsChart.options.scales.r.angleLines.color = gridColor;
+            this.skillsChart.options.scales.r.grid.color = gridColor;
+            this.skillsChart.options.scales.r.pointLabels.color = labelColor;
+            this.skillsChart.options.scales.r.ticks.color = labelColor;
+            
+            this.skillsChart.update();
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const app = new PortfolioApp();
+        app.init();
+    });
+</script>
+
+</body>
+</html>
