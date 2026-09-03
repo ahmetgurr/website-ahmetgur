@@ -1,0 +1,216 @@
+/*
+ * Matrix/Terminal admin teması.
+ * Payload'ın tüm elevation/success renk skalası --color-base-* ve --color-success-*
+ * CSS custom property'lerinden türetiliyor (bkz. @payloadcms/next/dist/prod/styles.css).
+ * Bu dosya @layer'sız (unlayered) olduğu için, Payload'ın @layer payload-default içindeki
+ * :root tanımlarını CSS cascade katman önceliği gereği otomatik olarak ezer — !important
+ * gerekmiyor. --color-success-* skalası sitenin Neon Yeşil (#00FF41) accent'ine eşleniyor,
+ * --color-base-* skalası sitenin ön yüzüyle birebir aynı Saf Siyah/#0D1117 zeminine eşleniyor
+ * (bkz. src/app/(frontend)/styles.css: --bg-primary/--card-bg/--text-primary).
+ */
+
+:root {
+  --accent-green: #00ff41;
+
+  /* Nötr gri skala yerine Matrix/terminal tonlu skala — 0 (dark temada ana metin,
+     frontend'in --text-primary'siyle aynı) → 800 (frontend'in --card-bg'i) →
+     900 (frontend'in --bg-primary'si, ana admin arka planı) → 1000 (saf siyah,
+     örn. .btn--style-primary'nin zemini) */
+  --color-base-0: rgb(201, 209, 217);
+  --color-base-50: rgb(186, 195, 204);
+  --color-base-100: rgb(171, 181, 192);
+  --color-base-150: rgb(156, 167, 179);
+  --color-base-200: rgb(141, 153, 167);
+  --color-base-250: rgb(126, 139, 154);
+  --color-base-300: rgb(112, 125, 141);
+  --color-base-350: rgb(97, 111, 129);
+  --color-base-400: rgb(83, 97, 116);
+  --color-base-450: rgb(70, 84, 104);
+  --color-base-500: rgb(58, 71, 92);
+  --color-base-550: rgb(48, 60, 80);
+  --color-base-600: rgb(39, 50, 68);
+  --color-base-650: rgb(32, 41, 56);
+  --color-base-700: rgb(26, 33, 45);
+  --color-base-750: rgb(23, 28, 38);
+  --color-base-800: rgb(22, 27, 34);
+  --color-base-850: rgb(18, 22, 28);
+  --color-base-900: rgb(13, 17, 23);
+  --color-base-950: rgb(6, 8, 9);
+  --color-base-1000: rgb(0, 0, 0);
+
+  /* "success" skalası Payload'da butonlar/aktif durumlar için kullanılan accent kanalı —
+     Neon Yeşil'e (#00FF41) çevrildi */
+  --color-success-50: rgb(230, 255, 240);
+  --color-success-100: rgb(204, 255, 224);
+  --color-success-150: rgb(179, 255, 209);
+  --color-success-200: rgb(153, 255, 194);
+  --color-success-250: rgb(128, 255, 179);
+  --color-success-300: rgb(102, 255, 163);
+  --color-success-350: rgb(77, 255, 148);
+  --color-success-400: rgb(51, 255, 133);
+  --color-success-450: rgb(26, 255, 86);
+  --color-success-500: rgb(0, 255, 65);
+  --color-success-550: rgb(0, 230, 58);
+  --color-success-600: rgb(0, 204, 52);
+  --color-success-650: rgb(0, 179, 46);
+  --color-success-700: rgb(0, 153, 39);
+  --color-success-750: rgb(0, 128, 33);
+  --color-success-800: rgb(0, 102, 27);
+  --color-success-850: rgb(0, 77, 20);
+  --color-success-900: rgb(0, 51, 14);
+  --color-success-950: rgb(0, 26, 7);
+
+  /* Sitenin ana fontu — admin panelinde de teknik/terminal hissiyatı için */
+  --font-body:
+    'Roboto Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* Keskin hatlar: köşe ovalliklerini tamamen sıfırla */
+  --style-radius-s: 0px;
+  --style-radius-m: 0px;
+  --style-radius-l: 0px;
+}
+
+.template-default {
+  background-color: var(--theme-bg);
+}
+
+/* Login / ilk kullanıcı oluşturma ekranı: saf siyah "komuta merkezi" terminali */
+.template-minimal {
+  background-color: #000000;
+}
+
+.template-minimal input {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--accent-green);
+  border-radius: 0;
+  color: var(--accent-green);
+  font-family: var(--font-body);
+  padding-left: 0;
+}
+
+.template-minimal input:focus {
+  border-bottom: 1px solid var(--accent-green);
+  box-shadow: 0 4px 8px -4px rgba(0, 255, 65, 0.6);
+  outline: none;
+}
+
+/* Login / Save / Publish gibi birincil butonlar: siyah zemin + neon yeşil border + glow */
+.btn--style-primary {
+  --bg-color: var(--color-base-1000);
+  --color: var(--accent-green);
+  --hover-bg: var(--color-base-950);
+  --hover-color: var(--accent-green);
+  border: 1px solid var(--accent-green);
+  box-shadow:
+    0 0 5px var(--accent-green),
+    0 0 10px rgba(0, 255, 65, 0.5);
+  transition:
+    box-shadow 0.25s ease,
+    background-color 0.25s ease;
+}
+
+.btn--style-primary:hover:not(.btn--disabled) {
+  box-shadow:
+    0 0 8px var(--accent-green),
+    0 0 18px rgba(0, 255, 65, 0.65);
+}
+
+/* Tüm butonlarda klavye/mouse odaklanma glow'u */
+.btn:focus-visible {
+  box-shadow:
+    0 0 0 1px var(--accent-green),
+    0 0 10px rgba(0, 255, 65, 0.45);
+}
+
+/* Input/textarea/select odaklanmalarında neon yeşil glow */
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--accent-green);
+  box-shadow:
+    0 0 0 1px var(--accent-green),
+    0 0 8px rgba(0, 255, 65, 0.5);
+}
+
+/* Aktif sol navigasyon öğesi işaretçisi */
+.nav__link-indicator {
+  background: var(--accent-green) !important;
+  box-shadow: 0 0 8px rgba(0, 255, 65, 0.6);
+}
+
+.nav__link.active,
+.nav a.nav__link:hover {
+  color: var(--accent-green);
+}
+
+/* Sekmeli alan (tabs field) aktif alt çizgisi */
+.tabs-field__tab-button--active:after {
+  background: var(--accent-green);
+}
+
+/* Başlıklarda hafif teknik/terminal görünüm */
+.step-nav,
+.doc-header h1,
+.dashboard__label {
+  letter-spacing: 0.02em;
+}
+
+/* Sidebar'daki kategori başlıkları (ör. "Collections") — hiyerarşide ana
+   başlık olduklarını net şekilde vurgulamak için büyük/kalın/neon */
+.nav-group__toggle {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--accent-green);
+}
+
+/* Üst çubuktaki [ ADMIN ] marka ikonu — Payload'ın kendi CSS'i bu kapsayıcıyı
+   18x18px sabit kare bir ikon için tasarlamış (@payloadcms/next/dist/prod/styles.css:
+   .step-nav__home{width:18px;height:18px}); geniş "[ ADMIN ]" metni bu yüzden
+   kutunun içinde kırpılıp görünmez oluyordu. width/height/overflow'u serbest
+   bırakıp metnin kapsayıcıya tam oturan, belirgin bir tıklanabilir alan
+   oluşturmasını sağlıyoruz. */
+.step-nav__home {
+  display: flex;
+  align-items: center;
+  width: auto;
+  height: auto;
+  min-width: 0;
+  overflow: visible;
+  padding: 4px 10px;
+  transition: box-shadow 0.2s ease;
+}
+
+.step-nav__home:hover {
+  box-shadow: 0 0 8px rgba(0, 255, 65, 0.4);
+}
+
+/* Geri Dön (CancelButton) konumu — beforeDocumentControls slotu DOM olarak
+   Save/Publish ile AYNI flex satırının (.doc-controls__controls) İÇİNDE,
+   ilk eleman olarak mount ediliyor (Payload'ın "sayfanın mutlak solu" için
+   köprülenebilir ayrı bir slotu yok). Önceki denemede position:absolute
+   kullanmıştık ama bu, Payload'ın kendi DOM/stacking yapısıyla çakışıp
+   butonun Save'in altında/üstünde kalarak tıklanamaz hale gelmesine yol
+   açtı. Bunun yerine butonu akışta bırakıp margin-right:auto veriyoruz —
+   flex satırında kendinden SONRAKİ tüm kardeşleri (Preview/Save/Publish)
+   satırın sonuna itiyor, böylece Cancel sol uçta, Save'den mümkün olan en
+   büyük boşlukla ayrılmış ve KESİNLİKLE üst üste binme riski olmadan
+   (akıştan hiç çıkmıyor) duruyor. */
+.admin-cancel-btn {
+  margin-right: auto;
+}
+
+.admin-cancel-btn:hover {
+  box-shadow:
+    0 0 5px var(--accent-green),
+    0 0 10px rgba(0, 255, 65, 0.5);
+}
+
+/* Çıkış (LogoutButton) — kırmızı "dikkat" glow'u korunuyor */
+.admin-logout-btn:hover {
+  box-shadow:
+    0 0 5px #ff3b3b,
+    0 0 10px rgba(255, 59, 59, 0.5);
+}

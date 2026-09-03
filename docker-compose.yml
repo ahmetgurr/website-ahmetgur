@@ -1,0 +1,40 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - '3000:3000'
+    environment:
+      # Servisler arası ağda Postgres'e 'postgres' servis adıyla bağlanılır
+      # (bu proje payload.config.ts'de DATABASE_URL okuyor — DATABASE_URI
+      # değil, isimlendirmeye dikkat).
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      PAYLOAD_SECRET: ${PAYLOAD_SECRET}
+      NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_SERVER_URL}
+      RESEND_API_KEY: ${RESEND_API_KEY}
+    volumes:
+      # Payload'ın yerel diske yazdığı yüklenen medya dosyaları (Media
+      # koleksiyonu, staticDir tanımsız -> varsayılan <cwd>/media) container
+      # yeniden oluşturulduğunda kaybolmasın diye kalıcı volume.
+      - media_uploads:/app/media
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:17-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    # Host'a port açılmıyor: web zaten aynı Docker network'ü üzerinden
+    # 'postgres' servis adıyla erişiyor, dışarıya açmak CasaOS/production'da
+    # gereksiz saldırı yüzeyi yaratır.
+
+volumes:
+  pgdata:
+  media_uploads:

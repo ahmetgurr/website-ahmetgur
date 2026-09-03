@@ -1,0 +1,202 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/typography';
+
+/*
+ * Tasarım token'ları — "Kurumsal Siber" (Deep Slate & Cyan) paleti.
+ * dark/light toggle, CSS custom property tabanlı renkler.
+ */
+@theme {
+  --font-mono: var(--font-roboto-mono), 'Roboto Mono', ui-monospace, monospace;
+
+  --color-background: var(--bg-primary);
+  --color-card: var(--card-bg);
+  --color-card-border: var(--card-border);
+  --color-foreground: var(--text-primary);
+  --color-muted: var(--text-faded);
+  --color-accent: var(--accent-color);
+  --color-card-glass: var(--card-bg-glass);
+}
+
+:root {
+  /* Dark tema (varsayılan) — Matrix/Terminal (Neon Yeşil) */
+  --bg-primary: #0d1117;
+  --card-bg: #161b22;
+  --card-border: #30363d;
+  --text-primary: #c9d1d9;
+  --text-faded: #8b949e;
+  --accent-color: #00ff41;
+  --glow-shadow: 0 0 5px var(--accent-color), 0 0 10px rgba(0, 255, 65, 0.5);
+  --card-bg-glass: rgba(22, 27, 34, 0.55);
+  --card-glow-shadow: 0 0 5px var(--accent-color), 0 0 10px rgba(0, 255, 65, 0.5);
+}
+
+[data-theme='light'] {
+  /* Light tema — krem zemin korunuyor, accent koyu camgöbeğine (AA kontrast) çevrildi */
+  --bg-primary: #faf7f0;
+  --card-bg: #ffffff;
+  --card-border: #e8e2d5;
+  --text-primary: #1a2332;
+  --text-faded: #8a8578;
+  --accent-color: #0891b2;
+  --glow-shadow: none;
+  --card-bg-glass: rgba(255, 255, 255, 0.55);
+  --card-glow-shadow: 0 0 0 1px var(--accent-color), 0 10px 30px -12px rgba(8, 145, 178, 0.28);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 18px;
+  line-height: 32px;
+  -webkit-font-smoothing: antialiased;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-mono);
+  font-size: 18px;
+  line-height: 32px;
+  margin: 0;
+  background: var(--color-background);
+  color: var(--color-foreground);
+  transition:
+    background-color 0.3s,
+    color 0.3s;
+
+  @media (max-width: 1024px) {
+    font-size: 15px;
+    line-height: 24px;
+  }
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+a {
+  color: currentColor;
+
+  &:focus {
+    opacity: 0.8;
+    outline: none;
+  }
+
+  &:active {
+    opacity: 0.7;
+    outline: none;
+  }
+}
+
+svg {
+  vertical-align: middle;
+}
+
+/* legacy-site'ın .neon-glow'una karşılık gelen accent-metin efekti */
+.text-glow {
+  color: var(--color-accent);
+  text-shadow: var(--glow-shadow);
+}
+
+/* Ana başlıklar (Hero adı, bölüm başlıkları) — light temada --glow-shadow: none
+   olduğundan bu kural yalnızca dark temada görünür etki yaratır. */
+h1.text-accent,
+h2.text-accent {
+  text-shadow: var(--glow-shadow);
+}
+
+/* Site genelindeki ortak glassmorphism kart yüzeyi + hover'da soft accent glow.
+   Hakkımda, Yetenekler, Projeler ve Deneyim bölümlerindeki tüm kartlar bunu paylaşır. */
+.glass-card {
+  background-color: var(--card-bg-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--color-card-border);
+  transition:
+    border-color 0.35s ease,
+    box-shadow 0.35s ease,
+    transform 0.35s ease;
+}
+
+.glass-card:hover {
+  border-color: var(--color-accent);
+  box-shadow: var(--card-glow-shadow);
+  transform: translateY(-2px);
+}
+
+/* "Tüm Blog Yazılarımı Gör" gibi cyan glow'lu vurgu butonları */
+.btn-glow {
+  border: 1px solid var(--color-accent);
+  color: var(--color-accent);
+  background: transparent;
+  box-shadow: var(--card-glow-shadow);
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    transform 0.3s ease;
+}
+
+.btn-glow:hover {
+  background-color: var(--color-accent);
+  color: var(--color-background);
+  transform: translateY(-2px);
+}
+
+/* Blog yazısı okuma sayfası için prose/prose-invert'i site paletine (navy/cyan) bağlar */
+.prose {
+  --tw-prose-body: var(--color-foreground);
+  --tw-prose-headings: var(--color-accent);
+  --tw-prose-lead: var(--color-muted);
+  --tw-prose-links: var(--color-accent);
+  --tw-prose-bold: var(--color-foreground);
+  --tw-prose-counters: var(--color-muted);
+  --tw-prose-bullets: var(--color-card-border);
+  --tw-prose-hr: var(--color-card-border);
+  --tw-prose-quotes: var(--color-foreground);
+  --tw-prose-quote-borders: var(--color-accent);
+  --tw-prose-captions: var(--color-muted);
+  --tw-prose-code: var(--color-accent);
+  --tw-prose-pre-code: var(--color-foreground);
+  --tw-prose-pre-bg: var(--color-card);
+  --tw-prose-th-borders: var(--color-card-border);
+  --tw-prose-td-borders: var(--color-card-border);
+}
+
+.prose code {
+  background-color: var(--color-card);
+  border: 1px solid var(--color-card-border);
+  border-radius: 4px;
+  padding: 0.15em 0.4em;
+  font-weight: 500;
+}
+
+.prose code::before,
+.prose code::after {
+  content: '';
+}
+
+.prose a {
+  text-decoration-color: var(--color-card-border);
+}
+
+/* Kod bloğu (CodeBlockRenderer) için terminal temalı özel scrollbar —
+   sabit koyu/neon görünüm, site temasından bağımsız. */
+.code-scroll::-webkit-scrollbar {
+  height: 8px;
+}
+
+.code-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.code-scroll::-webkit-scrollbar-thumb {
+  background: rgba(0, 255, 65, 0.3);
+  border-radius: 4px;
+}
+
+.code-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 255, 65, 0.5);
+}
