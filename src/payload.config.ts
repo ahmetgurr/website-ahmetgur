@@ -11,6 +11,7 @@ import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Posts } from './collections/Posts'
 import { AuthorProfile } from './globals/AuthorProfile'
+import { migrations } from './migrations'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -73,6 +74,14 @@ export default buildConfig({
     pool: {
       connectionString: process.env.DATABASE_URL || '',
     },
+    // Dev'de (NODE_ENV !== 'production') Payload şemayı otomatik push ediyor.
+    // Production'da (Docker imajımızda NODE_ENV=production) bu KAPALI —
+    // bu yüzden CasaOS'a ilk deploy'da veritabanı tablosuz kaldı
+    // ("relation \"posts\" does not exist"). prodMigrations, production'da
+    // her bağlantıda otomatik olarak (idempotent — payload_migrations
+    // tablosunda hangi migration'ların uygulandığını takip eder) bekleyen
+    // migration'ları çalıştırıyor, ekstra bir deploy adımı gerekmiyor.
+    prodMigrations: migrations,
   }),
   sharp,
   plugins: [],
