@@ -13,6 +13,10 @@ export const Users: CollectionConfig = {
   },
   access: {
     admin: ({ req: { user } }) => Boolean(user),
+    // /admin üzerinden anonim (giriş yapmamış) hiç kimse yeni kullanıcı
+    // oluşturamasın — sadece halihazırda oturum açmış biri yeni hesap
+    // ekleyebilir.
+    create: ({ req: { user } }) => Boolean(user),
   },
   auth: {
     maxLoginAttempts: 5,
