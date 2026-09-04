@@ -5,7 +5,9 @@ services:
       dockerfile: Dockerfile
     restart: always
     ports:
-      - '3000:3000'
+      # CasaOS sunucusunda cloudflared tüneli host'un 8088 portuna
+      # yönlendiriliyor (ahmetgur.com -> cloudflared -> :8088).
+      - '8088:3000'
     environment:
       # Servisler arası ağda Postgres'e 'postgres' servis adıyla bağlanılır
       # (bu proje payload.config.ts'de DATABASE_URL okuyor — DATABASE_URI
