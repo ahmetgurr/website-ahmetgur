@@ -17,6 +17,19 @@ export const Users: CollectionConfig = {
     // oluşturamasın — sadece halihazırda oturum açmış biri yeni hesap
     // ekleyebilir.
     create: ({ req: { user } }) => Boolean(user),
+    // Varsayılan (tanımsız) erişim herhangi bir oturum açmış kullanıcıya
+    // BAŞKA bir kullanıcının kaydını (email dahil) güncelleme izni verirdi —
+    // bir 'editor'/'read_only' hesabı bunu bir admin'in email'ini kendi
+    // kontrolündeki bir adrese çevirip şifre sıfırlama ile hesap ele geçirmek
+    // için kullanabilirdi. Sadece kendi kaydını, ya da admin/super_admin'i
+    // başkalarının kaydını güncelleyebilecek şekilde sınırla.
+    update: ({ req: { user } }) => {
+      if (!user) return false
+      if (user.role === 'super_admin' || user.role === 'admin') return true
+      return { id: { equals: user.id } }
+    },
+    // Aynı gerekçeyle: hesap silme sadece admin/super_admin'e ait olmalı.
+    delete: ({ req: { user } }) => user?.role === 'super_admin' || user?.role === 'admin',
   },
   auth: {
     maxLoginAttempts: 5,

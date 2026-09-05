@@ -9,10 +9,43 @@ const dirname = path.dirname(__filename)
 const serverURL = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
 const { protocol: serverProtocol, hostname: serverHostname, port: serverPort } = new URL(serverURL)
 
+const isDev = process.env.NODE_ENV === 'development'
+
+// Next.js'in resmi "nonce'suz" CSP örüntüsü (next/dist/docs/.../content-security-policy.md).
+// Nonce tabanlı bir CSP tüm sayfaları dinamik render'a zorlardı (statik üretim/ISR kaybı) —
+// bu proje için orantısız olurdu. 'unsafe-inline' script/style, hem layout.tsx'teki tema
+// init script'i hem de Payload admin panelinin satır içi stilleri için gerekli.
+const contentSecurityPolicy = [
+  `default-src 'self'`,
+  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''}`,
+  `style-src 'self' 'unsafe-inline'`,
+  `img-src 'self' blob: data:`,
+  `font-src 'self'`,
+  `object-src 'none'`,
+  `base-uri 'self'`,
+  `form-action 'self'`,
+  `frame-ancestors 'none'`,
+  `upgrade-insecure-requests`,
+].join('; ')
+
+const securityHeaders = [
+  { key: 'X-Frame-Options', value: 'DENY' },
+  { key: 'X-Content-Type-Options', value: 'nosniff' },
+  { key: 'Strict-Transport-Security', value: 'max-age=31536000; includeSubDomains' },
+  { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+  { key: 'Content-Security-Policy', value: contentSecurityPolicy },
+]
+
 const nextConfig: NextConfig = {
   // CasaOS/Docker'da çok aşamalı Dockerfile'ın son stage'i .next/standalone'dan
   // kopyalama yapıyor — bu olmadan o klasör hiç üretilmez.
   output: 'standalone',
+  // Prod'da varsayılan zaten false (Next.js kaynağı client'a sızdırmaz) — burada
+  // niyeti açıkça belgelemek ve gelecekte yanlışlıkla açılmasını engellemek için.
+  productionBrowserSourceMaps: false,
+  async headers() {
+    return [{ source: '/(.*)', headers: securityHeaders }]
+  },
   images: {
     localPatterns: [
       {
