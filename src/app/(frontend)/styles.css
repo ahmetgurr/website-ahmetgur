@@ -115,6 +115,25 @@ h2.text-accent {
   text-shadow: var(--glow-shadow);
 }
 
+/* Navbar dil seçici ([ TR / EN ]) — aktif dil accent renginde + glow,
+   pasif dil soluk; her ikisi de hover'da aynı glow'u alır. @layer components
+   içinde tanımlanmazsa (bkz. yukarıdaki a{} kuralının geçmişteki hatası)
+   Tailwind utility sınıflarını ezip bu bileşenin dışında da bozukluk yaratır. */
+@layer components {
+  .lang-option {
+    color: var(--color-muted);
+    transition:
+      color 0.3s ease-in-out,
+      text-shadow 0.3s ease-in-out;
+  }
+
+  .lang-option:hover,
+  .lang-option[data-active='true'] {
+    color: var(--color-accent);
+    text-shadow: var(--glow-shadow);
+  }
+}
+
 /* Site genelindeki ortak glassmorphism kart yüzeyi + hover'da soft accent glow.
    Hakkımda, Yetenekler, Projeler ve Deneyim bölümlerindeki tüm kartlar bunu paylaşır. */
 .glass-card {

@@ -14,21 +14,38 @@ export function LanguageToggle() {
     setLocale(match?.[1] === 'en' ? 'en' : 'tr')
   }, [])
 
-  function toggle() {
-    const next: Locale = locale === 'tr' ? 'en' : 'tr'
+  function selectLocale(next: Locale) {
+    if (next === locale) return
     document.cookie = `locale=${next}; path=/; max-age=31536000`
     setLocale(next)
     router.refresh()
   }
 
   return (
-    <button
-      type="button"
-      onClick={toggle}
-      aria-label="Dili değiştir / Switch language"
-      className="rounded-full px-2 py-2 font-mono text-xs font-semibold text-muted transition-colors hover:text-glow"
-    >
-      [ {locale === 'tr' ? 'TR' : 'EN'} / {locale === 'tr' ? 'EN' : 'TR'} ]
-    </button>
+    <span className="inline-flex items-center gap-1 rounded-full px-2 py-2 font-mono text-xs font-semibold">
+      [{' '}
+      <button
+        type="button"
+        onClick={() => selectLocale('tr')}
+        aria-pressed={locale === 'tr'}
+        aria-label="Türkçe"
+        data-active={locale === 'tr'}
+        className="lang-option"
+      >
+        TR
+      </button>
+      {' / '}
+      <button
+        type="button"
+        onClick={() => selectLocale('en')}
+        aria-pressed={locale === 'en'}
+        aria-label="English"
+        data-active={locale === 'en'}
+        className="lang-option"
+      >
+        EN
+      </button>
+      {' ]'}
+    </span>
   )
 }
