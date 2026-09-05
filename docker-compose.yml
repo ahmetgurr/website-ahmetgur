@@ -3,6 +3,12 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        # `next build` bu değişkeni koda gömer (NEXT_PUBLIC_ öneki) — aşağıdaki
+        # environment: sadece runtime içindir, build sırasında etkisi yok.
+        # Build-arg olarak geçmezse Payload prod'da medya URL'lerini
+        # localhost varsayılanıyla üretir ve kapak/profil görselleri kırılır.
+        NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_SERVER_URL}
     restart: always
     ports:
       # CasaOS sunucusunda cloudflared tüneli host'un 8088 portuna

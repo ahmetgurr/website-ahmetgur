@@ -17,6 +17,15 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 # Next.js telemetrisini derleme sırasında kapat
 ENV NEXT_TELEMETRY_DISABLED=1
+# NEXT_PUBLIC_ önekli değişkenler `next build` sırasında koda GÖMÜLÜR —
+# runtime'da docker-compose'un environment: ile geçmesi yetmez, çünkü o an
+# kod zaten derlenmiş olur. Bu değişken olmadan (ör. localhost varsayılanıyla)
+# derlenirse Payload, kapak/profil görsellerinin mutlak URL'lerini yanlış
+# host ile üretir (rich text içindeki görseller ayrı bir yoldan render
+# edildiği için bu sorunu yaşamaz) — bu yüzden build-arg olarak da geçirilmesi
+# şart (bkz. docker-compose.yml build.args).
+ARG NEXT_PUBLIC_SERVER_URL
+ENV NEXT_PUBLIC_SERVER_URL=${NEXT_PUBLIC_SERVER_URL}
 RUN pnpm build
 
 # ---- Çalışma zamanı ----
